@@ -35,7 +35,7 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
-  
+  Blynk.begin("7V4rIDrqwXxgZfDUwgnb1hzs-SXJXF7C", IPAddress(167, 172, 234, 162), 9090); 
   display.display();
   Serial.begin(9600);
 }
@@ -43,6 +43,7 @@ void setup() {
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
   // The core of your code will likely live here.
+  Blynk.run();
   display.loop();
   display.clearDisplay();
   display.setTextSize(1);
@@ -59,4 +60,9 @@ void loop() {
   }
   
   
+}
+// uses blynk to write messages
+BLYNK_WRITE(V0){
+  String inputText = param.asString();
+  client.publish("madlibs", inputText);
 }
