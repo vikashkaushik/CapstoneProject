@@ -46,6 +46,19 @@ void callback(char* topic, byte* payload, unsigned int length)
   }
   else if(length>1 && p[0] == '3'){
       choiceToDisplay3 = p;
+  }  
+  else if (p[5] == '1'){
+    count1 = p[7] - '0';
+    Serial.println(count1);
+  }
+  else if (p[5] == '2'){
+    count2 = p[7] - '0';
+        Serial.println(count2);
+
+  }
+  else if (p[5] == '3'){
+    count3 = p[7] - '0';
+        Serial.println(count3);
   }
   else {
     wordType = p;
@@ -71,20 +84,7 @@ ASSUMPTION: Formatted in:
   COUNT2:<NUM> /end
   COUNT3:<NUM /end
 */
-  if (p[5] == '1'){
-    count1 = p[7] - '0';
-    Serial.println(count1);
-  }
-  else if (p[5] == '2'){
-    count2 = p[7] - '0';
-        Serial.println(count2);
 
-  }
-  else if (p[5] == '3'){
-    count3 = p[7] - '0';
-        Serial.println(count3);
-
-  }
 
   //LED logic. only triggers if all three COUNT messages have been sent.
   if (count3 >= 0){
