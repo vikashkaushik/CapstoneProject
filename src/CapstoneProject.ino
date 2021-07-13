@@ -32,6 +32,12 @@ void callback(char* topic, byte* payload, unsigned int length)
   p[length] = NULL;
 
 //finds input if begins with 1
+/*ASSUMPTION - Format:
+  1.<INPUT>
+  2.<INPUT
+  3.<INPUT>
+*/
+
   if(length>1 && p[0] == '1'){
     choiceToDisplay1 = p;
   }
@@ -180,4 +186,7 @@ BLYNK_WRITE(V1){
   String inputText = param.asString();
   String outputText =  playerID + ". " + inputText;
   madlibSend(outputText);
+  /*output format:
+  1. <INPUT>
+  */
 }
