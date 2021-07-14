@@ -56,12 +56,15 @@ void callback(char* topic, byte* payload, unsigned int length)
   }  
   else if(length == 1 && p[0] == '1'){
     choiceToDisplay1 = p;
+    count1++;
   }
   else if(length == 1 && p[0] == '2'){
     choiceToDisplay2 = p;
+    count2++;
   }
   else if(length == 1 && p[0] == '3'){
     choiceToDisplay3 = p;
+    count3++;
   }  else{
     wordType = p;
     count1 = 0;
