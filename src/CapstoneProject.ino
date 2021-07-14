@@ -22,7 +22,7 @@ String wordType;          // Word type
 boolean viewChoices = true;
 boolean answerSubmitted = false;
 
-String playerID = "2";
+String playerID = "1";
 String channel = "madlibs";
 
 //count votes
@@ -80,8 +80,8 @@ void callback(char* topic, byte* payload, unsigned int length)
 
   //LED logic. only triggers if all three COUNT messages have been sent.
   if (count3 >= 0){
-    if (count2 >= count3){
-      if (count2 >= count1){
+    if (count3 >= count1){
+      if (count3 >= count2){
         analogWrite(A5, 255); //tied for first
 
       }
@@ -91,7 +91,7 @@ void callback(char* topic, byte* payload, unsigned int length)
     }
 
     else{
-      if (count2 >= count1){
+      if (count3 >= count2){
         analogWrite(A5, 127); //second
       }
       else{
@@ -213,7 +213,7 @@ BLYNK_WRITE(V1){
   String inputText = param.asString();
   String outputText =  playerID + "." + inputText;
   madlibSend(outputText);
-  choiceToDisplay2 = inputText;
+  choiceToDisplay1 = inputText;
   /*output format:
   1. <INPUT>
   */
