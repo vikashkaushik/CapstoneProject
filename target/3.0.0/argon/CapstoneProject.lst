@@ -31,11 +31,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  13 .debug_macro  00045a13  00000000  00000000  002de01b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_line   000575ae  00000000  00000000  00323a2e  2**0
+ 14 .debug_line   000575b2  00000000  00000000  00323a2e  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_str    00130cbf  00000000  00000000  0037afdc  2**0
+ 15 .debug_str    00130cbf  00000000  00000000  0037afe0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_frame  0000a074  00000000  00000000  004abc9c  2**2
+ 16 .debug_frame  0000a074  00000000  00000000  004abca0  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -581,10 +581,10 @@ void viewCountDisplay(){
    d432e:	6819      	ldr	r1, [r3, #0]
    d4330:	4620      	mov	r0, r4
    d4332:	f7ff ffb7 	bl	d42a4 <_ZN5Print7printlnIiLi0EEEjT_i>
-  display.println("Choice 3: ");
+  display.print("Choice 3: ");
    d4336:	490d      	ldr	r1, [pc, #52]	; (d436c <_Z16viewCountDisplayv+0x84>)
    d4338:	4620      	mov	r0, r4
-   d433a:	f003 f9c0 	bl	d76be <_ZN5Print7printlnEPKc>
+   d433a:	f003 f9ad 	bl	d7698 <_ZN5Print5printEPKc>
   display.println(count3);
    d433e:	4b0c      	ldr	r3, [pc, #48]	; (d4370 <_Z16viewCountDisplayv+0x88>)
    d4340:	4620      	mov	r0, r4
@@ -2132,8 +2132,8 @@ void loop() {
    d4dce:	701a      	strb	r2, [r3, #0]
     viewChoiceDisplay();
    d4dd0:	f7ff f9f6 	bl	d41c0 <_Z17viewChoiceDisplayv>
-  if (digitalRead(A2) == HIGH && answerSubmitted == false){
-   d4dd4:	2011      	movs	r0, #17
+  if (digitalRead(D2) == HIGH && answerSubmitted == false){
+   d4dd4:	2002      	movs	r0, #2
    d4dd6:	f003 fbdd 	bl	d8594 <digitalRead>
    d4dda:	2801      	cmp	r0, #1
    d4ddc:	d129      	bne.n	d4e32 <loop+0xaa>
@@ -2185,16 +2185,16 @@ void loop() {
     viewCountDisplay();
    d4e2c:	f7ff fa5c 	bl	d42e8 <_Z16viewCountDisplayv>
    d4e30:	e7d0      	b.n	d4dd4 <loop+0x4c>
-  else if (digitalRead(A3) == HIGH && answerSubmitted == false){
-   d4e32:	2010      	movs	r0, #16
+  else if (digitalRead(D3) == HIGH && answerSubmitted == false){
+   d4e32:	2003      	movs	r0, #3
    d4e34:	f003 fbae 	bl	d8594 <digitalRead>
    d4e38:	2801      	cmp	r0, #1
    d4e3a:	d102      	bne.n	d4e42 <loop+0xba>
    d4e3c:	4b0c      	ldr	r3, [pc, #48]	; (d4e70 <loop+0xe8>)
    d4e3e:	781a      	ldrb	r2, [r3, #0]
    d4e40:	b15a      	cbz	r2, d4e5a <loop+0xd2>
-  else if (digitalRead(A4) == HIGH && answerSubmitted == false){
-   d4e42:	200f      	movs	r0, #15
+  else if (digitalRead(D4) == HIGH && answerSubmitted == false){
+   d4e42:	2004      	movs	r0, #4
    d4e44:	f003 fba6 	bl	d8594 <digitalRead>
    d4e48:	2801      	cmp	r0, #1
    d4e4a:	d1d6      	bne.n	d4dfa <loop+0x72>
@@ -12437,7 +12437,7 @@ TwoWire& __fetch_global_Wire()
    d8b8d:	2d680030 74616562 00353400 66667562     0.h-beat.45.buff
    d8b9d:	006e692d 34323031 76656400 72615000     -in.1024.dev.Par
    d8bad:	6c636974 75620065 00646c69 206c754a     ticle.build.Jul 
-   d8bbd:	32203431 20313230 343a3830 32343a31     14 2021 08:41:42
+   d8bbd:	32203431 20313230 313a3930 32353a34     14 2021 09:14:52
    d8bcd:	64000000 75616665 0020746c 0042534d     ...default .MSB.
    d8bdd:	0042534c 4950533c 74746553 73676e69     LSB.<SPISettings
    d8bed:	66656420 746c7561 533c003e 65534950      default>.<SPISe

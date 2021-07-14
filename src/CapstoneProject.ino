@@ -23,12 +23,14 @@ boolean viewChoices = true;
 boolean answerSubmitted = false;
 
 String playerID = "2";
+//int playerID = 1;
 String channel = "madlibs";
 
 //count votes
 int count1 = 0;
 int count2 = 0;
 int count3 = 0;
+//int countList[3] = [0, 0, 0];
 
 void callback(char *topic, byte *payload, unsigned int length);
 void callback(char* topic, byte* payload, unsigned int length)
@@ -100,6 +102,7 @@ void callback(char* topic, byte* payload, unsigned int length)
     }
   }
 
+
   if (viewChoices == true){
     viewChoiceDisplay();
   }
@@ -159,17 +162,17 @@ void loop() {
   }
   
   //send to madlib
-  if (digitalRead(A2) == HIGH && answerSubmitted == false){
+  if (digitalRead(D2) == HIGH && answerSubmitted == false){
     answerSubmitted = true;
     madlibSend("1");
   }
 
-  else if (digitalRead(A3) == HIGH && answerSubmitted == false){
+  else if (digitalRead(D3) == HIGH && answerSubmitted == false){
     answerSubmitted = true;
     madlibSend("2");
   }
 
-  else if (digitalRead(A4) == HIGH && answerSubmitted == false){
+  else if (digitalRead(D4) == HIGH && answerSubmitted == false){
     answerSubmitted = true;
     madlibSend("3");
   }
@@ -194,12 +197,11 @@ void viewCountDisplay(){
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
-  display.println(wordType);
   display.print("Choice 1: ");
   display.println(count1);
   display.print("Choice 2: ");
   display.println(count2);
-  display.println("Choice 3: ");
+  display.print("Choice 3: ");
   display.println(count3);
   display.display();
 }
