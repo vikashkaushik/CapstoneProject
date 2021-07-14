@@ -22,7 +22,7 @@ String wordType;          // Word type
 boolean viewChoices = true;
 boolean answerSubmitted = false;
 
-String playerID = "1";
+String playerID = "3";
 String channel = "madlibs";
 
 //count votes
@@ -213,7 +213,7 @@ BLYNK_WRITE(V1){
   String inputText = param.asString();
   String outputText =  playerID + "." + inputText;
   madlibSend(outputText);
-  choiceToDisplay1 = inputText;
+  choiceToDisplay3 = inputText;
   /*output format:
   1. <INPUT>
   */
