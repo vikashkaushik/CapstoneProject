@@ -158,13 +158,11 @@ void loop() {
   if (display.pressedA()){
     viewChoices = true;
     viewChoiceDisplay();
-    Serial.println("A pressed");
   }
 
   else if (display.pressedC()){
     viewChoices = false;
     viewCountDisplay();
-    Serial.println("C pressed");
   }
   
   //send to madlib
