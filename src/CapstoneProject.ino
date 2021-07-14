@@ -22,7 +22,7 @@ String playerString = "1";
 int playerID = 1;
 
 
-String channel = "madlibsplayer";
+String channel = "madlibs";
 
 //count votes
 int countList[3] = {0, 0, 0};
