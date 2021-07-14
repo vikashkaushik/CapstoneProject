@@ -18,8 +18,13 @@ String choiceToDisplay2;  // answer choice 2
 String choiceToDisplay3;  // answer choice 3
 String wordType;          // Word type
 
-String playerID = "1";
+boolean viewChoices = true;
+boolean answerSubmitted = false;
 
+String playerID = "1";
+String channel = "madlibs";
+
+//count votes
 int count1;
 int count2;
 int count3;
@@ -36,6 +41,8 @@ void callback(char* topic, byte* payload, unsigned int length)
   1.<INPUT>
   2.<INPUT
   3.<INPUT>
+  ASSUMPTION - User output:
+  1. 1
 */
 
   if(length>1 && p[0] == '1'){
@@ -45,46 +52,27 @@ void callback(char* topic, byte* payload, unsigned int length)
     choiceToDisplay2 = p;
   }
   else if(length>1 && p[0] == '3'){
-      choiceToDisplay3 = p;
+    choiceToDisplay3 = p;
   }  
-  else if (p[5] == '1'){
-    count1 = p[7] - '0';
-    Serial.println(count1);
+  else if(length == 1 && p[0] == '1'){
+    choiceToDisplay1 = p;
   }
-  else if (p[5] == '2'){
-    count2 = p[7] - '0';
-        Serial.println(count2);
-
+  else if(length == 1 && p[0] == '2'){
+    choiceToDisplay2 = p;
   }
-  else if (p[5] == '3'){
-    count3 = p[7] - '0';
-        Serial.println(count3);
-  }
-  else {
+  else if(length == 1 && p[0] == '3'){
+    choiceToDisplay3 = p;
+  }  else{
     wordType = p;
+    count1 = 0;
+    count2 = 0;
+    count3 = 0;
+    choiceToDisplay1 = "";
+    choiceToDisplay2 = "";
+    choiceToDisplay3 = "";
+    viewChoices = true;
+    answerSubmitted = false;
   }
-    
-
-//prints list of choices
-  Serial.printf("%s",p);
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println(wordType);
-  display.println(choiceToDisplay1);
-  display.println(choiceToDisplay2);
-  display.println(choiceToDisplay3);
-  display.display();
-  Serial.println();
-
-/*
-ASSUMPTION: Formatted in:
-  COUNT1:<NUM> /end
-  COUNT2:<NUM> /end
-  COUNT3:<NUM /end
-*/
-
 
   //LED logic. only triggers if all three COUNT messages have been sent.
   if (count3 >= 0){
@@ -106,25 +94,23 @@ ASSUMPTION: Formatted in:
         analogWrite(A5, 1); //last
       }
     }
+  }
 
-    display.clearDisplay();
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0,0);
-    display.print("Choice 1: ");
-    display.println(count1);
-    display.print("Choice 2: ");
-    display.println(count2);
-    display.print("Choice 3: ");
-    display.println(count3);
-    display.display();
-    Serial.println();
+  if (viewChoices == true){
+    viewChoiceDisplay();
+  }
+  else{
+    viewCountDisplay();
   }
 }  
 // setup() runs once, when the device is first turned on.
 void setup() {
   // Put initialization like pinMode and begin functions here.
   pinMode(A5, OUTPUT);
+  pinMode(D2, INPUT);
+  pinMode(D3, INPUT);
+  pinMode(D4, INPUT);
+
   display.setup();
   display.clearDisplay();
   display.setTextSize(1);
@@ -150,42 +136,81 @@ void loop() {
 
   if (client.isConnected()) {
     client.loop();
-    client.subscribe("madlibscount");
+    client.subscribe(channel);
 
   } 
   else {
     client.connect(System.deviceID());
-    client.subscribe("madlibscount");
+    client.subscribe(channel);
   }
 
-//button input
+  //button input
   if (display.pressedA()){
-    madlibSend("1");
-  }
-
-  else if (display.pressedB()){
-    madlibSend("2");
+    viewChoices = true;
+    viewChoiceDisplay();
   }
 
   else if (display.pressedC()){
-    madlibSend("3");
+    viewChoices = false;
+    viewCountDisplay();
   }
   
+  //send to madlib
+  if (digitalRead(A2) == HIGH && answerSubmitted == false){
+    answerSubmitted = true;
+    madlibSend("1");
+  }
+
+  else if (digitalRead(A3) == HIGH && answerSubmitted == false){
+    answerSubmitted = true;
+    madlibSend("2");
+  }
+
+  else if (digitalRead(A4) == HIGH && answerSubmitted == false){
+    answerSubmitted = true;
+    madlibSend("3");
+  }
+
 
 }
 
+void viewChoiceDisplay(){
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println(wordType);
+  display.println(choiceToDisplay1);
+  display.println(choiceToDisplay2);
+  display.println(choiceToDisplay3);
+  display.display();
+}
+
+void viewCountDisplay(){
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println(wordType);
+  display.print("Choice 1: ");
+  display.println(count1);
+  display.print("Choice 2: ");
+  display.println(count2);
+  display.println("Choice 3: ");
+  display.println(count3);
+  display.display();
+}
 // function - sends OUTPUT to "madlibs"
 void madlibSend(String output){
-    client.subscribe("madlibs");
-    client.publish("madlibs", output);
-    client.unsubscribe("madlibs");
+    client.publish(channel, output);
 }
 
 BLYNK_WRITE(V1){
 // uses blynk to write messages
   String inputText = param.asString();
-  String outputText =  playerID + ". " + inputText;
+  String outputText =  playerID + "." + inputText;
   madlibSend(outputText);
+  choiceToDisplay1 = inputText;
   /*output format:
   1. <INPUT>
   */
