@@ -21,6 +21,7 @@ void madlibSend(String output);
 SYSTEM_THREAD(ENABLED);
 #include "MQTT.h"
 #include <blynk.h>
+
 MQTT client("lab.thewcl.com", 1883, callback);
 
 #include "oled-wing-adafruit.h"
@@ -34,13 +35,13 @@ String wordType;          // Word type
 boolean viewChoices = true;
 boolean answerSubmitted = false;
 
-String playerID = "1";
+String playerID = "2";
 String channel = "madlibs";
 
 //count votes
-int count1;
-int count2;
-int count3;
+int count1 = 0;
+int count2 = 0;
+int count3 = 0;
 
 void callback(char *topic, byte *payload, unsigned int length);
 void callback(char* topic, byte* payload, unsigned int length)
@@ -69,12 +70,15 @@ void callback(char* topic, byte* payload, unsigned int length)
   }  
   else if(length == 1 && p[0] == '1'){
     choiceToDisplay1 = p;
+    count1++;
   }
   else if(length == 1 && p[0] == '2'){
     choiceToDisplay2 = p;
+    count2++;
   }
   else if(length == 1 && p[0] == '3'){
     choiceToDisplay3 = p;
+    count3++;
   }  else{
     wordType = p;
     count1 = 0;
@@ -89,8 +93,8 @@ void callback(char* topic, byte* payload, unsigned int length)
 
   //LED logic. only triggers if all three COUNT messages have been sent.
   if (count3 >= 0){
-    if (count1 >= count3){
-      if (count1 >= count2){
+    if (count2 >= count3){
+      if (count2 >= count1){
         analogWrite(A5, 255); //tied for first
 
       }
@@ -100,7 +104,7 @@ void callback(char* topic, byte* payload, unsigned int length)
     }
 
     else{
-      if (count1 >= count2){
+      if (count2 >= count1){
         analogWrite(A5, 127); //second
       }
       else{
@@ -149,7 +153,6 @@ void loop() {
 
   if (client.isConnected()) {
     client.loop();
-    client.subscribe(channel);
 
   } 
   else {
@@ -223,7 +226,7 @@ BLYNK_WRITE(V1){
   String inputText = param.asString();
   String outputText =  playerID + "." + inputText;
   madlibSend(outputText);
-  choiceToDisplay1 = inputText;
+  choiceToDisplay2 = inputText;
   /*output format:
   1. <INPUT>
   */
