@@ -55,15 +55,15 @@ void callback(char* topic, byte* payload, unsigned int length)
     choiceList[2] = p;
   }  
   else if(length == 1 && p[0] == '1'){
-    choiceList[0] = p;
+    countList[0] = (int) p[0];
     countList[0]++;
   }
   else if(length == 1 && p[0] == '2'){
-    choiceList[1] = p;
+    countList[1] = (int) p[0];
     countList[1]++;
   }
   else if(length == 1 && p[0] == '3'){
-    choiceList[2] = p;
+    countList[2] = (int) p[0];
     countList[2]++;
   }  else{
     wordType = p;
