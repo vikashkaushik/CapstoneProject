@@ -31,8 +31,8 @@ boolean viewChoices = true;
 boolean answerSubmitted = false;
 
 //                                                                              ## CHANGE ##
-String playerString = "1";
-int playerID = 1;
+String playerString = "2";
+int playerID = 2;
 
 
 String channel = "madlibs";
@@ -68,15 +68,12 @@ void callback(char* topic, byte* payload, unsigned int length)
     choiceList[2] = p;
   }  
   else if(length == 1 && p[0] == '1'){
-    countList[0] = (int) p[0];
     countList[0]++;
   }
   else if(length == 1 && p[0] == '2'){
-    countList[1] = (int) p[0];
     countList[1]++;
   }
   else if(length == 1 && p[0] == '3'){
-    countList[2] = (int) p[0];
     countList[2]++;
   }  else{
     wordType = p;
@@ -182,6 +179,7 @@ void loop() {
   if (digitalRead(D5) == HIGH && answerSubmitted == false){
     answerSubmitted = true;
     madlibSend("1");
+    madlibSend("A");
   }
 
   else if (digitalRead(D6) == HIGH && answerSubmitted == false){

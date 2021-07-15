@@ -18,8 +18,8 @@ boolean viewChoices = true;
 boolean answerSubmitted = false;
 
 //                                                                              ## CHANGE ##
-String playerString = "1";
-int playerID = 1;
+String playerString = "2";
+int playerID = 2;
 
 
 String channel = "madlibs";
@@ -166,6 +166,7 @@ void loop() {
   if (digitalRead(D5) == HIGH && answerSubmitted == false){
     answerSubmitted = true;
     madlibSend("1");
+    madlibSend("A");
   }
 
   else if (digitalRead(D6) == HIGH && answerSubmitted == false){
