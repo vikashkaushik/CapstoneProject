@@ -30,7 +30,7 @@ String channel = "madlibs";
 //count votes
 int countList[3] = {0, 0, 0};
 
-String choiceList[3] = {"", "", ""};
+String choiceList[3] = {" ", " ", " "};
 
 void callback(char *topic, byte *payload, unsigned int length);
 void callback(char* topic, byte* payload, unsigned int length)
@@ -212,7 +212,12 @@ void viewChoiceDisplay(){
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
-  display.println(wordType);
+  if (isRunning == false){
+    display.println("PAUSED");
+  }
+  else{  
+    display.println(wordType);
+  }
   display.println(choiceList[0]);
   display.println(choiceList[1]);
   display.println(choiceList[2]);
