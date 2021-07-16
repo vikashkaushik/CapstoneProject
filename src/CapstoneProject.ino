@@ -5,21 +5,24 @@
 //                                                                      ##### BEGIN CODE #####
 
 SYSTEM_THREAD(ENABLED);
-#include "MQTT.h"
-#include <blynk.h>
+#include "MQTT.h" //libraries: MQTT
+#include <blynk.h> //libraries: blynk
 
-MQTT client("lab.thewcl.com", 1883, callback);
+MQTT client("lab.thewcl.com", 1883, callback); 
 
-#include "oled-wing-adafruit.h"
+#include "oled-wing-adafruit.h" //libraries: oled-wing-adafruit
 OledWingAdafruit display;
 String wordType;          // Word type
 
+
+
 boolean viewChoices = true;
 boolean answerSubmitted = false;
+boolean isRunning = true;
 
 //                                                                              ## CHANGE ##
-String playerString = "2";
-int playerID = 2;
+String playerString = "1";
+int playerID = 1; //change this as necessary
 
 
 String channel = "madlibs";
@@ -35,6 +38,7 @@ void callback(char* topic, byte* payload, unsigned int length)
   char p[length + 1];
   memcpy(p, payload, length);
   p[length] = NULL;
+  String s = p;
 
 //finds input if begins with 1
 /*ASSUMPTION - Format:
@@ -44,35 +48,47 @@ void callback(char* topic, byte* payload, unsigned int length)
   ASSUMPTION - User output:
   1. 1
 */
-
-  if(length>1 && p[0] == '1'){
-    choiceList[0] = p;
+  if(s.equals("PAUSED")){
+      isRunning = false;
   }
-  else if(length>1 && p[0] == '2'){
-    choiceList[1] = p;
+  else if(s.equals("UNPAUSED")){
+      isRunning = true;
   }
-  else if(length>1 && p[0] == '3'){
-    choiceList[2] = p;
-  }  
-  else if(length == 1 && p[0] == '1'){
-    countList[0]++;
+  else if (isRunning == true){
+    if(length>1 && p[0] == '1'){
+      choiceList[0] = p;
+    }
+    else if(length>1 && p[0] == '2'){
+      choiceList[1] = p;
+    }
+    else if(length>1 && p[0] == '3'){
+      choiceList[2] = p;
+    }  
+    else if(length == 1 && p[0] == '1'){
+      countList[0]++;
+    }
+    else if(length == 1 && p[0] == '2'){
+      countList[1]++;
+    }
+    else if(length == 1 && p[0] == '3'){
+      countList[2]++;
+    }  
+    else if (s.equals("UNPAUSED")){
+      isRunning = true;
+    }
+    else{
+      wordType = p;
+      countList[0] = 0;
+      countList[1] = 0;
+      countList[2] = 0;
+      choiceList[0] = "";
+      choiceList[1] = "";
+      choiceList[2] = "";
+      viewChoices = true;
+      answerSubmitted = false;
+    }
   }
-  else if(length == 1 && p[0] == '2'){
-    countList[1]++;
-  }
-  else if(length == 1 && p[0] == '3'){
-    countList[2]++;
-  }  else{
-    wordType = p;
-    countList[0] = 0;
-    countList[1] = 0;
-    countList[2] = 0;
-    choiceList[0] = "";
-    choiceList[1] = "";
-    choiceList[2] = "";
-    viewChoices = true;
-    answerSubmitted = false;
-  }
+  
 
   //LED logic. only triggers if all three COUNT messages have been sent.
 
@@ -119,6 +135,9 @@ void setup() {
   pinMode(D6, INPUT);
   pinMode(D7, INPUT);
 
+
+
+
   display.setup();
   display.clearDisplay();
   display.setTextSize(1);
@@ -129,6 +148,10 @@ void setup() {
   Serial.begin(9600);
 
   Blynk.begin("_XeCkFwjobmuT88r_NK86K2oypTbPhYB", IPAddress(167, 172, 234, 162), 9090);
+  
+
+
+
 }
 
 // loop() runs over and over again, as quickly as it can execute.
@@ -151,6 +174,8 @@ void loop() {
     client.subscribe(channel);
   }
 
+  
+  
   //button input
   if (display.pressedA()){
     viewChoices = true;
@@ -161,24 +186,25 @@ void loop() {
     viewChoices = false;
     viewCountDisplay();
   }
+
+  if (isRunning == true){
+    //send to madlib
+    if (digitalRead(D5) == HIGH && answerSubmitted == false){
+      answerSubmitted = true;
+      madlibSend("1");
+    }
+
+    else if (digitalRead(D6) == HIGH && answerSubmitted == false){
+      answerSubmitted = true;
+      madlibSend("2");
+    }
+
+    else if (digitalRead(D7) == HIGH && answerSubmitted == false){
+      answerSubmitted = true;
+      madlibSend("3");
+    }
   
-  //send to madlib
-  if (digitalRead(D5) == HIGH && answerSubmitted == false){
-    answerSubmitted = true;
-    madlibSend("1");
-    madlibSend("A");
   }
-
-  else if (digitalRead(D6) == HIGH && answerSubmitted == false){
-    answerSubmitted = true;
-    madlibSend("2");
-  }
-
-  else if (digitalRead(D7) == HIGH && answerSubmitted == false){
-    answerSubmitted = true;
-    madlibSend("3");
-  }
-
 }
 
 void viewChoiceDisplay(){
@@ -213,10 +239,12 @@ void madlibSend(String output){
 
 BLYNK_WRITE(V1){
 // uses blynk to write messages
-  String inputText = param.asString();
-  String outputText =  playerString + "." + inputText;
-  madlibSend(outputText);
-  choiceList[playerID-1] = inputText;
+  if(isRunning){
+    String inputText = param.asString();
+    String outputText =  playerString + "." + inputText;
+    madlibSend(outputText);
+    choiceList[playerID-1] = inputText;
+  }
   /*output format:
   1. <INPUT>
   */
