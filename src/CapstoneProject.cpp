@@ -20,13 +20,14 @@ void madlibSend(String output);
 SYSTEM_THREAD(ENABLED);
 #include "MQTT.h" //libraries: MQTT
 #include <blynk.h> //libraries: blynk
+#include "LIS3DH.h" //libraries: LIS3DH
+
 
 MQTT client("lab.thewcl.com", 1883, callback); 
 
 #include "oled-wing-adafruit.h" //libraries: oled-wing-adafruit
 OledWingAdafruit display;
 String wordType;          // Word type
-
 
 
 boolean viewChoices = true;
@@ -140,6 +141,11 @@ void callback(char* topic, byte* payload, unsigned int length)
     viewCountDisplay();
   }
 }  
+
+LIS3DHSPI accel(SPI, D3, WKP);
+const unsigned long PRINT_SAMPLE_PERIOD = 100;
+unsigned long lastPrintSample = 0;
+
 // setup() runs once, when the device is first turned on.
 void setup() {
   // Put initialization like pinMode and begin functions here.
@@ -161,10 +167,10 @@ void setup() {
   Serial.begin(9600);
 
   Blynk.begin("_XeCkFwjobmuT88r_NK86K2oypTbPhYB", IPAddress(167, 172, 234, 162), 9090);
-  
 
-
-
+  LIS3DHConfig config;
+	config.setAccelMode(LIS3DH::RATE_100_HZ);
+  accel.setup(config);
 }
 
 // loop() runs over and over again, as quickly as it can execute.
@@ -215,6 +221,23 @@ void loop() {
     else if (digitalRead(D7) == HIGH && answerSubmitted == false){
       answerSubmitted = true;
       madlibSend("3");
+    }
+
+    if (millis() - lastPrintSample >= PRINT_SAMPLE_PERIOD) {
+      lastPrintSample = millis();
+
+      LIS3DHSample sample;
+
+      if (accel.getSample(sample)) {
+        Serial.println(sample.x);
+
+        if (sample.x >= 3000 || sample.x <= -3000){
+          answerSubmitted = false;
+        }
+      }
+      else {
+        Serial.println("no sample");
+      }
     }
   
   }
